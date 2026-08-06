@@ -1,0 +1,81 @@
+---
+title: "CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# When to use CorSym
+
+CorSym is an estimator of correlations designed for exchangeable pair data, where the two values you want the correlation of come in an arbitrary/random order.
+This occurs frequently in the study of assortative pairing, where we wish to desire if individuals that are paired (meaning dating, co-habitation, marriage, or sharing children) have more similar characteristics (for example, socioeconomics or genetics) than random pairs in the population.
+We developed this estimator because we found that the obvious way to estimate correlations, using the Pearson estimator, is not only sensitive to the order (the estimates change if order is changed) but also statistically biased if the order is biased, meaning that the first value tends to be smaller than the second, or viceversa.
+CorSym estimates correlations for data like this without bias, and the answer is always the same for all possible orderings of the data in each pair.
+
+However, most applications requiring correlation estimates do not satisfy these assumptions!
+For example, if you want to estimate the correlation between age and smoking, you cannot randomly switch the age and smoking status of one observation without doing it in all of the other observations.
+In such a case, CorSym is not the right tool and its estimates will be nonsense.
+
+The exchangeable variables that CorSym requires are essentially separate measures of the same variable (with the same distribution) in two cases (like two people, in assortative pairing).
+Two variables $X$ and $Y$ are exchangeable if the joint probability distribution of $(X,Y)$ and $(Y,X)$ are the same.
+
+# Simulated example: extreme ordering
+
+Realistic data ideally is truly correlated, but here for simplicity we only simulate uncorrelated data.
+You can easily generate correlated data with the `mvtnorm` and other packages, as we do in our paper, but here we don't use those to reduce package dependencies.
+Nevertheless, you will see how data with zero correlation will have large Pearson estimates when the order of the data is biased.
+In general, order biases result in upward Pearson correlation biases.
+
+Simulate simple independent (uncorrelated) data for these examples.
+Let's simulate a relatively large number of pairs so estimates don't have much noise, and the biases are evident.
+```{r}
+n <- 1000
+# matrix with different pairs in rows 
+X <- matrix( rnorm( n * 2 ), nrow = n, ncol = 2 )
+```
+The above data is in "random" order: although the proportion of pairs where the value in the first column is less than that of the second column is rarely exactly 0.5, it will differ from it by small random amounts, without a preference (bias) for lower or higher values than 0.5.
+
+To contrast, we create a version of this data with "extreme" order, where every pair lists the minimum value first, and maximum value last.
+```{r}
+library(corsym)
+Xe <- partial_order( X )
+```
+
+Let's quantify the order biases by counting the number of times a given order was observed (say `x<y` where `x` is the first column and `y` is the second).
+```{r}
+data <- data.frame(
+  type = c('Random', 'Extreme'),
+  x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
+  n = n
+)
+```
+With real data it may not be clear if order is truly biased or if the order proportions are very different than 0.5 by chance, which occurs more often at small sample sizes.
+This function takes a table such as the one above, and adds columns with the empirical order proportions and the p-value from a two-sided Binomial test under the null hypothesis that the proportion is 0.5:
+```{r}
+order_bias_test( data )
+```
+
+Now that we confirmed that the initial data did not have an order bias, while the "extreme" data has the strongest bias possible, let's see the effect on the correlation estimates.
+Here is the combinatorial experiment, two estimators times two orders:
+```{r}
+# Each function returns 3 values:
+# estimate, and lower and upper confidence intervals (CIs)
+pearson( X )
+corsym( X )
+pearson( Xe )
+corsym( Xe )
+```
+When the data is in random order, Pearson and CorSym are both unbiased and agree approximately.
+They do not give exactly the same estimate, but they will be close to each other and to zero (because the data was uncorrelated), and their CIs should overlap zero and each other most of the time.
+However, when the data has the extreme order, Pearson gives a much bigger answer, significantly different than zero!
+In contrast, CorSym gives exactly the same answer for both orders.
+
