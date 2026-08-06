@@ -2,4 +2,5 @@
 
 export(add_cor_CI)
 export(corsym)
+export(partial_order)
 export(pearson)

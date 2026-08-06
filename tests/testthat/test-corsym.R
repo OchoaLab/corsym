@@ -16,6 +16,40 @@ xmc <- xm[ -(1:3) ]
 ymc <- ym[ -(1:3) ]
 nmc <- n-3 # only 3 pairs have NAs in the end
 
+test_that( "partial_order works", {
+    # cause errors on purpose
+    expect_error( partial_order() )
+    # input must be matrix, not vector
+    expect_error( partial_order( x ) )
+
+    # main run, results in extreme order
+    # NOTE: use <<- to remember variable globally (outside this scope)
+    expect_silent(
+        Xe <<- partial_order( X )
+    )
+    # minimally, dimensions should match)
+    expect_equal( dim( Xe ), dim( X ) )
+    # confirm that every row is increasing, as advertised
+    expect_true( all( apply( Xe, 1, diff ) >= 0 ) )
+
+    # test a random partial order
+    f <- runif( 1 )
+    expect_silent(
+        Xp <<- partial_order( X, f )
+    )
+    expect_equal( dim( Xp ), dim( X ) )
+    # we don't know here which rows were reordered, so we can't test them specifically
+    # but we do expect to see the effect on the averages (the first column should have lower values, and the second column higher values, than the starting data)
+    expect_true( mean( X[,1] ) >= mean( Xp[,1] ) )
+    expect_true( mean( X[,2] ) <= mean( Xp[,2] ) )
+
+    # edge case of no reordering, it should not change data
+    expect_silent(
+        X0 <- partial_order( X, 0 )
+    )
+    expect_equal( X0, X )
+})
+
 validate_handle_args <- function( obj, x, y, n ) {
     expect_true( is.list( obj ) )
     expect_equal( names( obj ), c('x', 'y', 'n') )
@@ -114,6 +148,12 @@ test_that( "pearson works", {
     expect_true( out[1] >= out[2] )
     expect_true( out[1] <= out[3] )
 
+    # same calculation but with matrix input
+    expect_silent(
+        out2 <- pearson( X )
+    )
+    expect_equal( out2, out )
+
     # turns out small sample sizes don't cause errors with pearson
     expect_silent(
         out <- pearson( 1, 1 )
@@ -128,6 +168,16 @@ test_that( "pearson works", {
         out <- pearson( 1:3, 1:3 )
     )
     expect_equal( out, c(1, NaN, 1) )
+
+    # confirm behavior when there's missingness
+    expect_silent(
+        out <- pearson( xm, ym )
+    )
+    expect_equal( out[1], cor( xm, ym, use = 'complete.obs' ) )
+    expect_silent(
+        out2 <- pearson( Xm )
+    )
+    expect_equal( out2, out )
 })
 
 test_that( "corsym works", {
@@ -144,6 +194,35 @@ test_that( "corsym works", {
     expect_equal( length( out ), 3 )
     expect_true( out[1] >= out[2] )
     expect_true( out[1] <= out[3] )
+
+    # same calculation but with matrix input
+    expect_silent(
+        out2 <- corsym( X )
+    )
+    expect_equal( out2, out )
+    # here we expect the exact same outputs on the ordered data
+    # test extreme and partial orders, which were precalculated
+    expect_silent(
+        out2 <- corsym( Xe )
+    )
+    expect_equal( out2, out )
+    expect_silent(
+        out2 <- corsym( Xp )
+    )
+    expect_equal( out2, out )
+
+    # repeat with missingness
+    expect_silent(
+        out <- corsym( xm, ym )
+    )
+    expect_true( is.numeric( out ) )
+    expect_equal( length( out ), 3 )
+    expect_true( out[1] >= out[2] )
+    expect_true( out[1] <= out[3] )
+    expect_silent(
+        out2 <- corsym( Xm )
+    )
+    expect_equal( out2, out )
 
     # turns out small sample sizes don't cause errors with corsym
     expect_silent(

@@ -2,7 +2,6 @@
 % Please edit documentation in R/corsym-package.R
 \docType{package}
 \name{corsym-package}
-\alias{corsym}
 \alias{corsym-package}
 \title{corsym: Correlation Estimation For Exchangeable/Symmetric Pairs}
 \description{

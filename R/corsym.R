@@ -1,5 +1,21 @@
-# implementation of the method proposed in this paper
-
+#' Calculate CorSym estimates with confidence intervals (CIs)
+#'
+#' This function estimates the correlation of two exchangeable variables without bias.
+#' The output is deterministic, the same for all orders within individual pairs.
+#' Pairs with any missingness are automatically ignored.
+#'
+#' @inheritParams pearson
+#'
+#' @return A vector with three values: the CorSym correlation estimate between `x` and `y`, and the lower and upper CIs.
+#'
+#' @examples
+#' # generate some random independent data, just for example
+#' n <- 53
+#' x <- rnorm( n )
+#' y <- rnorm( n )
+#' # calculate CorSym correlation with CIs
+#' corsym( x, y )
+#' 
 #' @export
 corsym <- function( x, y = NULL, alpha = 0.05, ci_offset = 1.5 ) {
     # normalize inputs
