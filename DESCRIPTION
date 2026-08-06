@@ -1,5 +1,5 @@
 Package: corsym
-Title: Correlation Estimation For Exchangeable/Symmetric Pairs
+Title: Correlation Estimation For Exchangeable/Symmetrical Variables
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Alejandro",

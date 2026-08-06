@@ -3,9 +3,34 @@
 \docType{package}
 \name{corsym-package}
 \alias{corsym-package}
-\title{corsym: Correlation Estimation For Exchangeable/Symmetric Pairs}
+\title{CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables}
 \description{
-We implement a new correlation estimator, CorSym, designed for exchangeable variables, where the ordering of the two values in the pair is arbitrary. This kind of data arises frequently in the study of assortative pairing (for example, income in a couple). The standard Pearson estimator is sensitive to such ordering and can be highly biased when the order is biased (when the first value tends to have lower or higher values than the second value). CorSym gives the same estimate deterministically for all orders within each pair, and estimates the desired correlation without bias (variables must be exchangeable). The package also includes utilities to simulate biased orders and test for order bias.
+This package implements \code{\link[=corsym]{corsym()}}, an unbiased estimator of the correlation for exchangeable data, where the values (x,y) in a pair have no inherent order, so replacing with (y,x) randomly in any or all pairs is equally valid.
+It also provides functions to modify variable orders with \code{\link[=partial_order]{partial_order()}} and a wrapper around the standard \code{\link[=pearson]{pearson()}} estimator to illustrate its problematic dependence on data ordering (under the hypothesis that order is actually meaningless).
+Lastly, \code{\link[=add_cor_CI]{add_cor_CI()}} calculates confidence intervals (CIs) to existing correlation estimates with sample sizes (used internally by both \code{\link[=corsym]{corsym()}} and \code{\link[=pearson]{pearson()}}).
+}
+\examples{
+# We simulate simple independent (uncorrelated) data for these examples.
+# (Correlated data can be simulated with the `mvtnorm` and other packages,
+# we do this in our paper, but here it is omitted to reduce package dependencies.)
+# number of pairs
+n <- 47
+# matrix with different pairs in rows 
+X <- matrix( rnorm( n * 2 ), nrow = n, ncol = 2 )
+
+# create a version with extreme order (every pair starts with the minimum value,
+# ends with the maximum in the pair):
+Xe <- partial_order( X )
+
+# with the data in random order, Pearson and CorSym agree roughly
+pearson( X )
+corsym( X )
+
+# but Pearson gives a very different answer for extremely ordered data
+# while CorSym gives exactly the same answer both ways
+pearson( Xe )
+corsym( Xe )
+
 }
 \author{
 \strong{Maintainer}: Alejandro Ochoa \email{alejandro.ochoa@duke.edu} (\href{https://orcid.org/0000-0003-4928-3403}{ORCID})
