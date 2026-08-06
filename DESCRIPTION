@@ -1,0 +1,23 @@
+Package: corsym
+Title: Correlation Estimation For Exchangeable/Symmetric Pairs
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given = "Alejandro",
+	   family = "Ochoa",
+	   role = c("aut", "cre"),
+	   email = "alejandro.ochoa@duke.edu",
+           comment = c(ORCID = "0000-0003-4928-3403")),
+    person(given = "Gabriel",
+	   family = "Kennedy",
+	   role = c("aut"),
+	   email = "gabriel.kennedy@duke.edu",
+           comment = c(ORCID = "0000-0003-4412-3777"))
+    )
+Description: We implement a new correlation estimator, CorSym, designed for exchangeable variables, where the ordering of the two values in the pair is arbitrary.  This kind of data arises frequently in the study of assortative pairing (for example, income in a couple).  The standard Pearson estimator is sensitive to such ordering and can be highly biased when the order is biased (when the first value tends to have lower or higher values than the second value).  CorSym gives the same estimate deterministically for all orders within each pair, and estimates the desired correlation without bias (variables must be exchangeable).  The package also includes utilities to simulate biased orders and test for order bias.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
