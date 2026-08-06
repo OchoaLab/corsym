@@ -16,6 +16,22 @@ xmc <- xm[ -(1:3) ]
 ymc <- ym[ -(1:3) ]
 nmc <- n-3 # only 3 pairs have NAs in the end
 
+test_that( "randomize_order works", {
+    # cause errors on purpose
+    expect_error( randomize_order() )
+    # input must be matrix, not vector
+    expect_error( randomize_order( x ) )
+
+    expect_silent(
+        Xr <- randomize_order( X )
+    )
+    expect_true( is.matrix( Xr ) )
+    # minimally, dimensions should match)
+    expect_equal( dim( Xr ), dim( X ) )
+    # row sums should be preserved
+    expect_equal( rowSums( Xr ), rowSums( X ) )
+})
+
 test_that( "partial_order works", {
     # cause errors on purpose
     expect_error( partial_order() )
@@ -27,6 +43,7 @@ test_that( "partial_order works", {
     expect_silent(
         Xe <<- partial_order( X )
     )
+    expect_true( is.matrix( Xe ) )
     # minimally, dimensions should match)
     expect_equal( dim( Xe ), dim( X ) )
     # confirm that every row is increasing, as advertised

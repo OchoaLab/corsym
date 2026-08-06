@@ -30,7 +30,7 @@ For example, the proportion of the genome of each parent that is of a given ance
 We want to estimate the correlation between values in the pair.
 The standard Pearson estimator can be biased if the data has an order bias, while CorSym is unbiased and gives the same answer for all orders.
 
-``` r
+```r
 library(corsym)
 
 # Calculate correlations with CIs with both methods.
@@ -43,18 +43,29 @@ corsym( X )
 # if your data is in random order, create a version with extreme order
 # (every pair starts with the minimum value, ends with the maximum in the pair):
 Xe <- partial_order( X )
+# and if you suspect your data has a biased order, generate a randomized order version:
+Xr <- randomize_order( Xe )
 
 # confirm Pearson gives a very different answer for extremely ordered data
 # while CorSym gives exactly the same answer both ways
 pearson( Xe )
 corsym( Xe )
 
+# Pearson is also sensitive to random order variations, Corsym is not:
+pearson( Xr )
+corsym( Xr )
+
 # test the data for order bias
 # count the number of times the first value was the smaller one of the pair,
-# separately for the original data and the extreme order data
+# separately for the original, randomized, and extreme order data
 data <- data.frame(
-  x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
-  n = n
+    type = c('Original', 'Random', 'Extreme'),
+    x = c(
+        sum( X[,1] < X[,2] ),
+        sum( Xr[,1] < Xr[,2] ),
+        sum( Xe[,1] < Xe[,2] )
+    ),
+    n = n
 )
 # this function reports the frequency of those cases,
 # and p-values under the null hypothesis that the true frequency is 0.5

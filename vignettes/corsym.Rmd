@@ -36,6 +36,8 @@ Nevertheless, you will see how data with zero correlation will have large Pearso
 In general, order biases result in upward Pearson correlation biases.
 
 Simulate simple independent (uncorrelated) data for these examples.
+To be exchangeable, it is vital that the marginal distrbutions of both columns be the same!
+(Here both are Standard Normal.)
 Let's simulate a relatively large number of pairs so estimates don't have much noise, and the biases are evident.
 ```{r}
 n <- 1000
@@ -49,12 +51,20 @@ To contrast, we create a version of this data with "extreme" order, where every 
 library(corsym)
 Xe <- partial_order( X )
 ```
+We can also take biased data and "randomize" it, for further comparison:
+```{r}
+Xr <- randomize_order( Xe )
+```
 
 Let's quantify the order biases by counting the number of times a given order was observed (say `x<y` where `x` is the first column and `y` is the second).
 ```{r}
 data <- data.frame(
-  type = c('Random', 'Extreme'),
-  x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
+  type = c('Random 1', 'Random 2', 'Extreme'),
+  x = c(
+    sum( X[,1] < X[,2] ),
+    sum( Xr[,1] < Xr[,2] ),
+    sum( Xe[,1] < Xe[,2] )
+  ),
   n = n
 )
 ```
@@ -63,19 +73,23 @@ This function takes a table such as the one above, and adds columns with the emp
 ```{r}
 order_bias_test( data )
 ```
+Since sample sizes are huge, you'll see insignificant p-values for the first two cases, and an extremely significant p-value in the last one.
 
-Now that we confirmed that the initial data did not have an order bias, while the "extreme" data has the strongest bias possible, let's see the effect on the correlation estimates.
-Here is the combinatorial experiment, two estimators times two orders:
+Now that we confirmed that the initial and randomized data did not have an order bias, while the "extreme" data has the strongest bias possible, let's see the effect on the correlation estimates.
+Here is the combinatorial experiment, two estimators times three orders:
 ```{r}
 # Each function returns 3 values:
 # estimate, and lower and upper confidence intervals (CIs)
 pearson( X )
-corsym( X )
+pearson( Xr )
 pearson( Xe )
+corsym( X )
+corsym( Xr )
 corsym( Xe )
 ```
 When the data is in random order, Pearson and CorSym are both unbiased and agree approximately.
 They do not give exactly the same estimate, but they will be close to each other and to zero (because the data was uncorrelated), and their CIs should overlap zero and each other most of the time.
+Also note that Pearson gives slightly different estimates for each random order.
 However, when the data has the extreme order, Pearson gives a much bigger answer, significantly different than zero!
-In contrast, CorSym gives exactly the same answer for both orders.
+In contrast, CorSym gives exactly the same answer for all orders.
 

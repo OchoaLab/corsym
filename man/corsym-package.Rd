@@ -6,7 +6,7 @@
 \title{CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables}
 \description{
 This package implements \code{\link[=corsym]{corsym()}}, an unbiased estimator of the correlation for exchangeable data, where the values (x,y) in a pair have no inherent order, so replacing with (y,x) randomly in any or all pairs is equally valid.
-It also provides functions to modify variable orders with \code{\link[=partial_order]{partial_order()}} and a wrapper around the standard \code{\link[=pearson]{pearson()}} estimator to illustrate its problematic dependence on data ordering (under the hypothesis that order is actually meaningless).
+It also provides functions to modify variable orders with \code{\link[=partial_order]{partial_order()}} and \code{\link[=randomize_order]{randomize_order()}}, and a wrapper around the standard \code{\link[=pearson]{pearson()}} estimator to illustrate its problematic dependence on data ordering (under the hypothesis that order is actually meaningless).
 \code{\link[=order_bias_test]{order_bias_test()}} provides a statistical test for order bias.
 Lastly, \code{\link[=add_cor_CI]{add_cor_CI()}} calculates confidence intervals (CIs) to existing correlation estimates with sample sizes (used internally by both \code{\link[=corsym]{corsym()}} and \code{\link[=pearson]{pearson()}}).
 }
@@ -22,10 +22,17 @@ X <- matrix( rnorm( n * 2 ), nrow = n, ncol = 2 )
 # create a version with extreme order (every pair starts with the minimum value,
 # ends with the maximum in the pair):
 Xe <- partial_order( X )
+# and you can randomize biased orders too:
+Xr <- randomize_order( Xe )
 
 # with the data in random order, Pearson and CorSym agree roughly
 pearson( X )
 corsym( X )
+
+# with a second random reordering, Pearson differs slightly,
+# while Corsym gives exactly the same answer as before
+pearson( Xr )
+corsym( Xr )
 
 # but Pearson gives a very different answer for extremely ordered data
 # while CorSym gives exactly the same answer both ways
@@ -34,9 +41,15 @@ corsym( Xe )
 
 # test the data for order bias
 # count the number of times the first value was the smaller one of the pair,
-# separately for the original data and the extreme order data
+# separately for the original data, the second randomization,
+# and the extreme order data
 data <- data.frame(
-  x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
+  type = c('Random 1', 'Random 2', 'Extreme'),
+  x = c(
+        sum( X[,1] < X[,2] ),
+        sum( Xr[,1] < Xr[,2] ),
+        sum( Xe[,1] < Xe[,2] )
+  ),
   n = n
 )
 # this function reports the frequency of those cases,
