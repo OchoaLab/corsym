@@ -33,9 +33,9 @@ test_that( "partial_order works", {
     expect_true( all( apply( Xe, 1, diff ) >= 0 ) )
 
     # test a random partial order
-    f <- runif( 1 )
+    q <- runif( 1 )
     expect_silent(
-        Xp <<- partial_order( X, f )
+        Xp <<- partial_order( X, q )
     )
     expect_equal( dim( Xp ), dim( X ) )
     # we don't know here which rows were reordered, so we can't test them specifically
@@ -235,4 +235,29 @@ test_that( "corsym works", {
         out <- corsym( 1:2, 1:2 )
     )
     expect_equal( out, c(1, 1, 1) )
+})
+
+test_that( "order_bias_test works", {
+    # cause errors on purpose
+    expect_error( order_bias_test( ) )
+    expect_error( order_bias_test( 1 ) )
+    expect_error( order_bias_test( data.frame( a = 1 ) ) )
+    expect_error( order_bias_test( data.frame( x = 1 ) ) )
+    expect_error( order_bias_test( data.frame( n = 1 ) ) )
+
+    # simulate data for test
+    data <- data.frame(
+        x = sum( x < y ),
+        n = n
+    )
+    expect_silent(
+        data2 <- order_bias_test( data )
+    )
+    expect_true( is.data.frame( data2 ) )
+    expect_equal( names( data2 ), c('x', 'n', 'f', 'pval') )
+    expect_equal( data2[,c('x','n')], data )
+    expect_true( all( data$f >= 0 ) )
+    expect_true( all( data$f <= 1 ) )
+    expect_true( all( data$pval >= 0 ) )
+    expect_true( all( data$pval <= 1 ) )
 })

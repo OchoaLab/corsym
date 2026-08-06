@@ -7,6 +7,7 @@
 \description{
 This package implements \code{\link[=corsym]{corsym()}}, an unbiased estimator of the correlation for exchangeable data, where the values (x,y) in a pair have no inherent order, so replacing with (y,x) randomly in any or all pairs is equally valid.
 It also provides functions to modify variable orders with \code{\link[=partial_order]{partial_order()}} and a wrapper around the standard \code{\link[=pearson]{pearson()}} estimator to illustrate its problematic dependence on data ordering (under the hypothesis that order is actually meaningless).
+\code{\link[=order_bias_test]{order_bias_test()}} provides a statistical test for order bias.
 Lastly, \code{\link[=add_cor_CI]{add_cor_CI()}} calculates confidence intervals (CIs) to existing correlation estimates with sample sizes (used internally by both \code{\link[=corsym]{corsym()}} and \code{\link[=pearson]{pearson()}}).
 }
 \examples{
@@ -30,6 +31,17 @@ corsym( X )
 # while CorSym gives exactly the same answer both ways
 pearson( Xe )
 corsym( Xe )
+
+# test the data for order bias
+# count the number of times the first value was the smaller one of the pair,
+# separately for the original data and the extreme order data
+data <- data.frame(
+  x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
+  n = n
+)
+# this function reports the frequency of those cases,
+# and p-values under the null hypothesis that the true frequency is 0.5
+order_bias_test( data )
 
 }
 \author{

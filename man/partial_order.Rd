@@ -4,15 +4,15 @@
 \alias{partial_order}
 \title{Apply partial ordering to the rows of a matrix}
 \usage{
-partial_order(X, f = 1)
+partial_order(X, q = 1)
 }
 \arguments{
 \item{X}{Matrix of data.}
 
-\item{f}{Proportion of rows to force to have extreme order (sorted in increasing order).}
+\item{q}{Proportion of rows to force to have extreme order (sorted in increasing order).}
 }
 \value{
-The input matrix with a random proportion \code{f} of rows sorted in increasing order, the rest equals the input data.
+The input matrix with a random proportion \code{q} of rows sorted in increasing order, the rest equals the input data.
 }
 \description{
 This function reorders a proportion of rows so values appear in increasing order.

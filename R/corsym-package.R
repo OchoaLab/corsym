@@ -2,6 +2,7 @@
 #'
 #' This package implements [corsym()], an unbiased estimator of the correlation for exchangeable data, where the values (x,y) in a pair have no inherent order, so replacing with (y,x) randomly in any or all pairs is equally valid.
 #' It also provides functions to modify variable orders with [partial_order()] and a wrapper around the standard [pearson()] estimator to illustrate its problematic dependence on data ordering (under the hypothesis that order is actually meaningless).
+#' [order_bias_test()] provides a statistical test for order bias.
 #' Lastly, [add_cor_CI()] calculates confidence intervals (CIs) to existing correlation estimates with sample sizes (used internally by both [corsym()] and [pearson()]).
 #'
 #' @examples
@@ -25,6 +26,17 @@
 #' # while CorSym gives exactly the same answer both ways
 #' pearson( Xe )
 #' corsym( Xe )
+#'
+#' # test the data for order bias
+#' # count the number of times the first value was the smaller one of the pair,
+#' # separately for the original data and the extreme order data
+#' data <- data.frame(
+#'   x = c( sum( X[,1] < X[,2] ), sum( Xe[,1] < Xe[,2] ) ),
+#'   n = n
+#' )
+#' # this function reports the frequency of those cases,
+#' # and p-values under the null hypothesis that the true frequency is 0.5
+#' order_bias_test( data )
 #' 
 #' @keywords internal
 "_PACKAGE"

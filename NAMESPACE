@@ -2,5 +2,6 @@
 
 export(add_cor_CI)
 export(corsym)
+export(order_bias_test)
 export(partial_order)
 export(pearson)
