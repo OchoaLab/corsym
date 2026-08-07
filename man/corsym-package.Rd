@@ -57,6 +57,14 @@ data <- data.frame(
 order_bias_test( data )
 
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/OchoaLab/corsym}
+  \item Report bugs at \url{https://github.com/OchoaLab/corsym/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Alejandro Ochoa \email{alejandro.ochoa@duke.edu} (\href{https://orcid.org/0000-0003-4928-3403}{ORCID})
 

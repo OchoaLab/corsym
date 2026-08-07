@@ -16,17 +16,17 @@ knitr::opts_chunk$set(
 
 # When to use CorSym
 
-CorSym is an estimator of correlations designed for exchangeable pair data, where the two values you want the correlation of come in an arbitrary/random order.
+CorSym is a correlation estimator designed for exchangeable pair data, where the two values you want the correlation of come in an arbitrary/random order.
 This occurs frequently in the study of assortative pairing, where we wish to desire if individuals that are paired (meaning dating, co-habitation, marriage, or sharing children) have more similar characteristics (for example, socioeconomics or genetics) than random pairs in the population.
+More broadly, the exchangeable variables that CorSym requires are essentially separate measures of the same variable (with the same distribution) in two cases (like two people, in assortative pairing).
+Two variables $X$ and $Y$ are exchangeable if the joint probability distribution of $(X,Y)$ and $(Y,X)$ are the same.
+
 We developed this estimator because we found that the obvious way to estimate correlations, using the Pearson estimator, is not only sensitive to the order (the estimates change if order is changed) but also statistically biased if the order is biased, meaning that the first value tends to be smaller than the second, or viceversa.
-CorSym estimates correlations for data like this without bias, and the answer is always the same for all possible orderings of the data in each pair.
+CorSym estimates correlations for data like this without bias, and the answer does not depend on the order of the data.
 
 However, most applications requiring correlation estimates do not satisfy these assumptions!
-For example, if you want to estimate the correlation between age and smoking, you cannot randomly switch the age and smoking status of one observation without doing it in all of the other observations.
+For example, if you want to estimate the correlation between age and smoking, you cannot randomly switch the age and smoking status of one observation without doing it to all other observations.
 In such a case, CorSym is not the right tool and its estimates will be nonsense.
-
-The exchangeable variables that CorSym requires are essentially separate measures of the same variable (with the same distribution) in two cases (like two people, in assortative pairing).
-Two variables $X$ and $Y$ are exchangeable if the joint probability distribution of $(X,Y)$ and $(Y,X)$ are the same.
 
 # Simulated example: extreme ordering
 
@@ -35,11 +35,12 @@ You can easily generate correlated data with the `mvtnorm` and other packages, a
 Nevertheless, you will see how data with zero correlation will have large Pearson estimates when the order of the data is biased.
 In general, order biases result in upward Pearson correlation biases.
 
-Simulate simple independent (uncorrelated) data for these examples.
+Let's simulate simple independent (uncorrelated) data for these examples.
 To be exchangeable, it is vital that the marginal distrbutions of both columns be the same!
 (Here both are Standard Normal.)
 Let's simulate a relatively large number of pairs so estimates don't have much noise, and the biases are evident.
 ```{r}
+# number of pairs
 n <- 1000
 # matrix with different pairs in rows 
 X <- matrix( rnorm( n * 2 ), nrow = n, ncol = 2 )
@@ -93,3 +94,77 @@ Also note that Pearson gives slightly different estimates for each random order.
 However, when the data has the extreme order, Pearson gives a much bigger answer, significantly different than zero!
 In contrast, CorSym gives exactly the same answer for all orders.
 
+# Simulated example: partial orderings
+
+Since CorSym always gives the same answer for all orders, we will ignore it for now.
+Let's focus on establishing the effect of partial data ordering on Pearson estimates.
+```{r}
+# sequence of forced order proportions between 0 and 1
+# (q=0 is original data, q=1 is extreme order)
+qs <- ( 0:10 ) / 10
+
+# data frame to grow
+data <- NULL
+for ( q in qs ) {
+    # force a proportion `q` of rows to have extreme order 
+    Xp <- partial_order( X, q )
+    # pearson estimates
+    out <- pearson( Xp )
+
+    # gather into data frame for plotting
+    data_q <- data.frame(
+        n = n,
+	q = q,
+        # counts for biased order test
+        x = sum( Xp[,1] < Xp[,2] ),
+	# Pearson estimates
+	r = out[1],
+	CIL = out[2],
+	CIU = out[3]
+    )
+    data <- rbind( data, data_q )
+}
+
+# perform order bias tests on these data
+data <- order_bias_test( data )
+
+# inspect table
+data
+```
+
+We can establish a lot of facts about this data now.
+A simple one first, the "forced order proportion" $q$ is not equal to the order proportion $f$, because random data ($q=0$) has an expected order proportion of $\text{E}[f] = 0.5$.
+Thus, when $q$ fraction of the data is forced to have extreme order, the expected order proportion becomes $\text{E}[f] = ( 1 - q ) ( 0.5 ) + q ( 1 ) = 0.5(1 + q)$.
+The data shows agreement with this formula:
+```{r}
+library(ggplot2)
+ggplot( data, aes( x = q, y = f ) ) +
+	geom_point() +
+	theme_classic() +
+	geom_abline( intercept = 0.5, slope = 0.5, linetype = 'dashed', color = 'gray' )
+```
+
+Now we can see the relationship between the forced order proportion $q$ and the bias.
+Since the true correlation is zero, the estimate $r$ is the bias in this case.
+The data shows a non-linear relationship, where $q \le 0.5$ CIs are likely to contain the true value of zero, while $q > 0.5$ cases are more likely to be significantly non-zero and quickly increase.
+```{r}
+ggplot( data, aes( x = q, y = r ) ) +
+	geom_point() +
+	theme_classic() +
+   	geom_errorbar( aes( ymin = CIL, ymax = CIU ) ) +
+	geom_hline( yintercept = 0, linetype = 'dashed', color = 'gray' )
+```
+
+Lastly, we can look directly at significance of the order bias.
+We have a lot of power to detect differences, so even at $q=0.1$ we tend to get significant results.
+Comparing to the previous figure, we see that a significant order bias does not directly result in significantly biased Pearson estimates.
+```{r}
+# Bonferroni threshold
+pcut <- 0.05 / nrow( data )
+pcut
+
+ggplot( data, aes( x = q, y = -log10( pval ) ) ) +
+	geom_point() +
+	theme_classic() +
+	geom_hline( yintercept = -log10( pcut ), linetype = 'dashed', color = 'gray' )
+```
