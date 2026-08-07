@@ -22,5 +22,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
+Imports:
+    ggplot2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://github.com/OchoaLab/corsym
+BugReports: https://github.com/OchoaLab/corsym/issues
