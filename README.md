@@ -1,7 +1,4 @@
-# CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables
-
-<!-- badges: start -->
-<!-- badges: end -->
+# CorSym: Correlation Estimation For Exchangeable/Symmetrical Variables <img src="man/figures/logo.png" alt="CorSym" align="right" />
 
 This package implements CorSym, an unbiased estimator of the correlation for exchangeable data, where the values (x,y) in a pair have no inherent order, so replacing with (y,x) randomly in any or all pairs is equally valid.
 This scenario occurs frequently in the study of assortative pairing, for example, what is the correlation between the two incomes of a couple, or their ancestry proportions?
@@ -9,12 +6,10 @@ It also provides functions to calculate confidence intervals (CIs) separately, m
 
 ## Installation
 
-<!--
 You can install the released version of corsym from [CRAN](https://CRAN.R-project.org) with:
 ``` r
 install.packages("corsym")
 ```
--->
 
 You can install the development version of corsym from [GitHub](https://github.com/) with:
 
