@@ -72,3 +72,6 @@ data <- data.frame(
 order_bias_test( data )
 ```
 
+## Citation
+
+Gabriel Kennedy, Alejandro Ochoa. Estimating the correlation of exchangeable variables in assortative mating. bioRxiv doi:10.64898/2026.08.22.746446 2026-08-26.
