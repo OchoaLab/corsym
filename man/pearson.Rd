@@ -23,7 +23,7 @@ A vector with three values: the Pearson correlation estimate between \code{x} an
 This function is a simple wrapper around \code{\link[stats:cor]{stats::cor()}} with the same interface and missingness handling of \code{\link[=corsym]{corsym()}}, particularly it adds CIs to the estimates.
 Pairs with any missingness are automatically ignored (matching \code{\link[stats:cor]{stats::cor()}} with non-default option \code{use = 'complete.obs'}).
 Also, unlike \code{\link[stats:cor]{stats::cor()}}, this function accepts only two variables as inputs and does not calculate correlation matrices, just the correlation between the two variables.
-Pearson is included in this package to constrast to \code{\link[=corsym]{corsym()}} in handling exchangeable variables.
+Pearson is included in this package to contrast to \code{\link[=corsym]{corsym()}} in handling exchangeable variables.
 }
 \examples{
 # generate some random independent data, just for example

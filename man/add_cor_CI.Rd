@@ -22,7 +22,7 @@ Cases with NAs or with \code{n < ci_offset} have NA CIs.}
 For Normal data, Pearson should use 3 and CorSym 1.5, but different values may be better for other distributions.}
 }
 \value{
-A matrix with a row for every input (single row if \code{r} and \code{n} are both scalars, as many rows as the lenghts of either \code{r} or \code{n} otherwise), and three named columns: \code{r} repeats the input, and \code{CIL} and \code{CIU} are the lower and upper CIs.
+A matrix with a row for every input (single row if \code{r} and \code{n} are both scalars, as many rows as the lengths of either \code{r} or \code{n} otherwise), and three named columns: \code{r} repeats the input, and \code{CIL} and \code{CIU} are the lower and upper CIs.
 }
 \description{
 This function calculates CIs based on the Fisher transformation and theory originally derived for Pearson estimator, now validated empirically for CorSym.

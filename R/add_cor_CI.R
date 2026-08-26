@@ -14,7 +14,7 @@
 #' @param ci_offset The amount by which the sample size gets reduced in the variance conversion formula.
 #' For Normal data, Pearson should use 3 and CorSym 1.5, but different values may be better for other distributions.
 #'
-#' @return A matrix with a row for every input (single row if `r` and `n` are both scalars, as many rows as the lenghts of either `r` or `n` otherwise), and three named columns: `r` repeats the input, and `CIL` and `CIU` are the lower and upper CIs.
+#' @return A matrix with a row for every input (single row if `r` and `n` are both scalars, as many rows as the lengths of either `r` or `n` otherwise), and three named columns: `r` repeats the input, and `CIL` and `CIU` are the lower and upper CIs.
 #'
 #' @examples
 #' # make up values for example

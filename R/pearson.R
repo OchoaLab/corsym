@@ -3,7 +3,7 @@
 #' This function is a simple wrapper around [stats::cor()] with the same interface and missingness handling of [corsym()], particularly it adds CIs to the estimates.
 #' Pairs with any missingness are automatically ignored (matching [stats::cor()] with non-default option `use = 'complete.obs'`).
 #' Also, unlike [stats::cor()], this function accepts only two variables as inputs and does not calculate correlation matrices, just the correlation between the two variables.
-#' Pearson is included in this package to constrast to [corsym()] in handling exchangeable variables.
+#' Pearson is included in this package to contrast to [corsym()] in handling exchangeable variables.
 #'
 #' @inheritParams add_cor_CI
 #' @param x First vector of variables, or a 2-column matrix with the variables of interest

@@ -36,7 +36,7 @@ Nevertheless, you will see how data with zero correlation will have large Pearso
 In general, order biases result in upward Pearson correlation biases.
 
 Let's simulate simple independent (uncorrelated) data for these examples.
-To be exchangeable, it is vital that the marginal distrbutions of both columns be the same!
+To be exchangeable, it is vital that the marginal distributions of both columns be the same!
 (Here both are Standard Normal.)
 Let's simulate a relatively large number of pairs so estimates don't have much noise, and the biases are evident.
 ```{r}
