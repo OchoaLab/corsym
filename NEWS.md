@@ -6,4 +6,4 @@
 
 * Added preprint citations in `DESCRIPTION` and `README.md`
 * Added logo, linked to `README.md`; added CRAN install instructions in anticipation.
-* Minor: fixed typos.
+* Minor: fixed typos, title case.
