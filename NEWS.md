@@ -4,6 +4,8 @@
 
 # corsym 1.0.0 (2026-08-26)
 
+* First CRAN submission
 * Added preprint citations in `DESCRIPTION` and `README.md`
 * Added logo, linked to `README.md`; added CRAN install instructions in anticipation.
 * Minor: fixed typos, title case.
+* Added CRAN comments
