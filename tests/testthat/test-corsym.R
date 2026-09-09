@@ -39,9 +39,8 @@ test_that( "partial_order works", {
     expect_error( partial_order( x ) )
 
     # main run, results in extreme order
-    # NOTE: use <<- to remember variable globally (outside this scope)
     expect_silent(
-        Xe <<- partial_order( X )
+        Xe <- partial_order( X )
     )
     expect_true( is.matrix( Xe ) )
     # minimally, dimensions should match)
@@ -52,7 +51,7 @@ test_that( "partial_order works", {
     # test a random partial order
     q <- runif( 1 )
     expect_silent(
-        Xp <<- partial_order( X, q )
+        Xp <- partial_order( X, q )
     )
     expect_equal( dim( Xp ), dim( X ) )
     # we don't know here which rows were reordered, so we can't test them specifically
@@ -66,6 +65,10 @@ test_that( "partial_order works", {
     )
     expect_equal( X0, X )
 })
+
+# now that those tests passed, save these as globals (repeat, but meh)
+Xe <- partial_order( X )
+Xp <- partial_order( X, 0.5 )
 
 validate_handle_args <- function( obj, x, y, n ) {
     expect_true( is.list( obj ) )

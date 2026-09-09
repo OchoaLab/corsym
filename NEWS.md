@@ -9,3 +9,7 @@
 * Added logo, linked to `README.md`; added CRAN install instructions in anticipation.
 * Minor: fixed typos, title case.
 * Added CRAN comments
+
+# corsym 1.0.1 (2026-09-09)
+
+* CRAN resubmission, fixed problem "Writing to the .GlobalEnv", by replacing `<<-` calls in unit tests.
